@@ -1,0 +1,57 @@
+---
+title: Dashboard
+format: dashboard
+---
+
+## Overview 
+
+This dashboard analyzes whether California's proposed 2025 congressional map (Proposition 50) increases partisan advantage compared to the 2024 map.
+
+## Key Metrics 
+
+### Column
+
+**2024 Efficiency Gap**
+
+```{r}
+round(eg_2024 * 100, 2)
+```
+### Column
+
+**2025 Efficiency Gap**
+
+```{r}
+round(eg_2025 * 100, 2)
+```
+### Column
+
+**Difference**
+
+```{r}
+round((eg_2025 - eg_2024) * 100, 2)
+```
+## Analysis
+
+### Comparison Chart
+```{r}
+#| echo: false
+tibble(
+  Map = c("2024", "2025"),
+  `Efficiency Gap (%)` = c(eg_2024 * 100, eg_2025 * 100)
+) %>%
+  ggplot(aes(x = Map, y = `Efficiency Gap (%)`)) +
+  geom_col(fill = c("steelblue", "coral")) +
+  geom_hline(yintercept = 7, linetype = "dashed", color = "red") +
+  geom_hline(yintercept = -7, linetype = "dashed", color = "red") +
+  labs(title = "Efficiency Gap Comparison",
+       subtitle = "Red lines show ±7% threshold") +
+  theme_minimal()
+```
+
+### Findings 
+
+**Key Results:**
+
+1. The 2024 map had an efficiency gap of [X]%
+2. The 2025 map has an efficiency gap of [Y]%
+3. This represents a [increase/decrease] of [Z] percentage points

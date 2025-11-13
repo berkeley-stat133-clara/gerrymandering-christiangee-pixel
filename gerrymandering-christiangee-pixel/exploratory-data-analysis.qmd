@@ -1,0 +1,64 @@
+---
+title: Exploratory Data Analysis
+format: pdf
+---
+
+### Question 1
+
+Which district had the closest race?
+
+### Answer 1
+
+```{r}
+
+district_totals <- votes_clean |>
+    group_by(district) |>
+    summarize(
+        dem _ sum(dem_votes, na.rm = TRUE),
+        rep = sum(rep_votes, na.rm = TRUE),
+        total = dem + rep,
+        margin_pct = abs(dem - rep) / total * 100
+    ) |>
+    arrange(margin_pct)
+
+head(district_totals, 1)
+
+```
+
+
+### Question 2
+
+What's the distribution of precint sizes?
+
+### Answer 2
+
+```{r}
+
+precinct_sizes <- votes_clean |>
+    mutate(size = dem_votes + rep_votes)
+
+ggplot(precinct_sizes, aes(x = size)) +
+  geom_histogram(bins = 50, fill = "steelblue") +
+  labs(title = "Distribution of Precinct Sizes",
+       x = "Total Votes",
+       y = "Number of Precincts") +
+  theme_minimal()
+
+summary(precinct_sizes$size)
+
+```
+
+
+### Question 3
+
+How many districts had blowouts (>20% margin)?
+
+### Answer 3
+
+
+```{r}
+blowouts <- district_totals |>
+    filter(margin_pct > 20)
+
+nrow(blowouts)
+```

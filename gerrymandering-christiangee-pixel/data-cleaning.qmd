@@ -1,0 +1,40 @@
+---
+title: Data Cleaning
+format: pdf
+---
+
+```{r}
+install.packages("lwgeom")
+library(sf)
+library(lwgeom)
+
+#Approach A
+
+# 1. Load data
+
+sr_votes <- read_csv("data/sr_precinct_votes.csv")
+sr_shp <- st_read("data/shapefiles/sr_precincts.shp")
+districts_2025 <- st_read("data/shapefiles/ab604_districts.shp")
+
+# 2. Check column types
+
+sr_shp <- sr_shp |>
+  st_transform(3310) |>          
+  st_set_precision(1) |>         
+  st_make_valid() |>             
+  st_collection_extract("POLYGON")
+
+districts_2025 <- districts_2025 |>
+  st_transform(3310)              
+
+# 5. Join votes to geometries
+
+sr_spatial <- sr_shp |>
+  left_join(sr_votes, by = "precinct_id")
+
+# 6. Interpolate votes to new districts
+
+votes_2025 <- sr_spatial |>
+  st_interpolate_aw(districts_2025, extensive = TRUE)
+
+```
